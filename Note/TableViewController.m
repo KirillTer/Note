@@ -8,10 +8,16 @@
 
 #import "TableViewController.h"
 #import "DBManager.h"
+#import "NoteTableViewCell.h"
 
 @interface TableViewController ()
 @property (nonatomic) NSMutableArray <Note *> *arrayNotes;
 @property (weak, nonatomic) UILabel *noNotesLabel;
+
+@property (strong,nonatomic) NSMutableArray *searchResultArray;
+@property (weak, nonatomic) IBOutlet UISearchBar *noteSearchBar;
+@property (strong, nonatomic) IBOutlet UISearchDisplayController *noteSearchDisplayController;
+
 @end
 
 @implementation TableViewController
@@ -30,6 +36,15 @@
     [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName,nil] forState:UIControlStateNormal];
     //set back button arrow color
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    //search
+    self.searchResultArray = [NSMutableArray arrayWithCapacity:[self.arrayNotes count]];
+    
+//    [self.tableView registerClass:[NoteTableViewCell class] forCellReuseIdentifier:@"NoteCell"];
+//    static NSString *reuseIdentifier = @"NoteCell";
+//    [self.noteSearchDisplayController.searchResultsTableView registerClass:[NoteTableViewCell class] forCellReuseIdentifier:@"NoteCell"];
+    
+    [self.tableView registerNib:[UINib nibWithNibName:@"NoteTableViewCell" bundle:nil] forCellReuseIdentifier:@"NoteCell"];
+    [self.noteSearchDisplayController.searchResultsTableView registerNib:[UINib nibWithNibName:@"NoteTableViewCell" bundle:nil] forCellReuseIdentifier:@"NoteCell"];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -63,16 +78,33 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return self.arrayNotes.count;
+    // Check to see whether the normal table or search results table is being displayed and return the count from the appropriate array
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        return self.searchResultArray.count;
+    } else {
+        return self.arrayNotes.count;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *cellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-    Note *notes = (Note *)[self.arrayNotes objectAtIndex:indexPath.section];
-    UILabel *label = (UILabel *)[cell viewWithTag:1];
-    label.text = notes.text;
-    label.numberOfLines = 0;
+    NoteTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"NoteCell"
+                                                            forIndexPath:indexPath];
+   
+    Note *note;
+    // Check to see whether the normal table or search results table is being displayed and set object from the appropriate array
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        note = [self.searchResultArray objectAtIndex:indexPath.section];
+    } else {
+        note = (Note *)[self.arrayNotes objectAtIndex:indexPath.section];
+    }
+    cell.descriptionLabel.text = note.text;
+    
+    NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
+    [DateFormatter setDateFormat:@"dd MMM yyyy, hh:mm"];
+    NSString *dateString = [DateFormatter stringFromDate:note.time];
+    
+    cell.titleLabel.text = dateString;
+    cell.descriptionLabel.numberOfLines = 0;
     cell.backgroundColor = [UIColor whiteColor];
     return cell;
 }
@@ -88,32 +120,15 @@
     [self.tableView deleteSections:sections withRowAnimation:YES];
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    
-    // Create View
-    CGRect viewFrame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 20);
-    UIView *view = [[UIView alloc] initWithFrame:viewFrame];
-    view.backgroundColor = [UIColor whiteColor];
-    
-    // Create Label
-    CGRect labelFrame = CGRectMake(25, 5, CGRectGetWidth(self.view.frame), 20);
-    UILabel *label = [[UILabel alloc] initWithFrame:labelFrame];
-    [view addSubview:label];
-    label.numberOfLines = 0;
-    label.textColor = [UIColor colorWithRed:85.0/255.0 green:143.0/255.0 blue:220.0/255.0 alpha:1.0];
-
-    Note *note = self.arrayNotes[section];
-    NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
-    [DateFormatter setDateFormat:@"dd MMM yyyy, hh:mm"];
-    NSString *dateString = [DateFormatter stringFromDate:note.time];
-    
-    label.text = dateString;
-    
-    return view;
-}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    Note *note = self.arrayNotes[indexPath.section];
+    Note *note;
+    
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
+        note = [self.searchResultArray objectAtIndex:indexPath.row];
+    } else {
+        note = (Note *)[self.arrayNotes objectAtIndex:indexPath.section];
+    }
+    
     NSString *text = note.text;
     NSDictionary *attributes = @{
                                  NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:14]
@@ -134,5 +149,31 @@
     }
 }
 
+#pragma mark Content Filtering
+-(void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
+    // Update the filtered array based on the search text and scope.
+    // Remove all objects from the filtered search array
+    [self.searchResultArray removeAllObjects];
+    // Filter the array using NSPredicate
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.text contains[c] %@",searchText];
+    self.searchResultArray = [NSMutableArray arrayWithArray:[self.arrayNotes filteredArrayUsingPredicate:predicate]];
+}
+#pragma mark - UISearchDisplayController Delegate Methods
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
+    // Tells the table data source to reload when text changes
+    NSArray *titles = [self.searchDisplayController.searchBar scopeButtonTitles];
+    NSInteger index = [self.searchDisplayController.searchBar selectedScopeButtonIndex];
+    [self filterContentForSearchText:searchString
+                               scope:titles[index]];
+    // Return YES to cause the search result table view to be reloaded.
+    return YES;
+}
 
+-(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption {
+    // Tells the table data source to reload when scope bar selection changes
+    [self filterContentForSearchText:self.searchDisplayController.searchBar.text
+                               scope:[[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
+    // Return YES to cause the search result table view to be reloaded.
+    return YES;
+}
 @end

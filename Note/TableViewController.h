@@ -10,6 +10,6 @@
 #import "AppDelegate.h"
 #import "Note.h"
 #import "ViewController.h"
-@interface TableViewController : UITableViewController
+@interface TableViewController : UITableViewController <UISearchBarDelegate, UISearchDisplayDelegate>
 
 @end
