@@ -33,7 +33,7 @@
                     <navigationItem key="navigationItem" id="mrS-mI-scP">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="OrZ-1A-DgV">
                             <connections>
-                                <segue destination="BYZ-38-t0r" kind="show" id="BDt-ab-xQG"/>
+                                <segue destination="BYZ-38-t0r" kind="show" identifier="addNewNote" id="BDt-ab-xQG"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -60,7 +60,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NoteViewController" id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>

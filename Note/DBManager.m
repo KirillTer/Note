@@ -34,6 +34,11 @@
     [[self managedObjectContext] deleteObject:obj];
 }
 
+- (void)cleanContext
+{
+    [[self managedObjectContext] deletedObjects];
+}
+
 -(NSManagedObject *) createEntityName:(NSString *) entityName{
     NSManagedObject *object = [NSEntityDescription insertNewObjectForEntityForName:entityName
                                   inManagedObjectContext:[self managedObjectContext]];

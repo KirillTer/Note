@@ -140,13 +140,15 @@
     return CGRectGetHeight(rect) + 50;
 }
 
-#pragma mark - Navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([[segue identifier] isEqualToString:@"editNotes"]) {
-        Note *note = [_arrayNotes objectAtIndex:[[self.tableView indexPathForSelectedRow]section]];
-        ViewController *editText = (ViewController *)segue.destinationViewController;
-        editText.note = note;
-    }
+#pragma mark - UITableViewDelegate
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    Note *note = self.arrayNotes[indexPath.section];
+    ViewController *editViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"NoteViewController"];
+    editViewController.note = note;
+    [self.navigationController pushViewController:editViewController animated:YES];
 }
 
 #pragma mark Content Filtering

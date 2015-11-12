@@ -56,7 +56,8 @@
     return self.note.photo != nil;
 }
 
-//ave button
+#pragma mark - Actions
+//save button
 - (IBAction)save:(id)sender{
     if (![self.noteTextView.text length]) {       
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Alert" message:@"Please input some text" preferredStyle:UIAlertControllerStyleAlert];
@@ -72,9 +73,11 @@
     }
 }
 - (IBAction)cancel:(id)sender{
+    [[DBManager sharedInstance] removeObject:self.note];
     [[self navigationController] popViewControllerAnimated:YES];
 }
 
+#pragma mark - Helpers
 - (void)createNote
 {
     Note *newNote = (Note *)[[DBManager sharedInstance] createEntityName:@"Note"];
