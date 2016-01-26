@@ -104,6 +104,9 @@
 				84E1A8671BECDA0B00F116BC /* TableViewController.m */,
 				84E293FC1BEF85F3001D2C4E /* DBManager.h */,
 				84E293FD1BEF85F3001D2C4E /* DBManager.m */,
+				8422DE361BF322550039080A /* NoteTableViewCell.h */,
+				8422DE371BF322550039080A /* NoteTableViewCell.m */,
+				8422DE391BF326340039080A /* NoteTableViewCell.xib */,
 				84E1A8551BECD84100F116BC /* Assets.xcassets */,
 				84E1A7F41BEE03980025DCC7 /* close.png */,
 				84E389A41BEDFD4C008E02D2 /* close.png */,
@@ -111,9 +114,6 @@
 				84E1A85A1BECD84100F116BC /* Info.plist */,
 				84E1A8521BECD84100F116BC /* Note.xcdatamodeld */,
 				84E1A8461BECD84100F116BC /* Supporting Files */,
-				8422DE361BF322550039080A /* NoteTableViewCell.h */,
-				8422DE371BF322550039080A /* NoteTableViewCell.m */,
-				8422DE391BF326340039080A /* NoteTableViewCell.xib */,
 			);
 			path = Note;
 			sourceTree = "<group>";

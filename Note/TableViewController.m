@@ -2,8 +2,8 @@
 //  TableViewController.m
 //  Note
 //
-//  Created by Admin on 11/6/15.
-//  Copyright © 2015 Admin. All rights reserved.
+//  Created by Admin on 1/26/16.
+//  Copyright © 2016 KirillTer. All rights reserved.
 //
 
 #import "TableViewController.h"
@@ -112,7 +112,7 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [[DBManager sharedInstance] removeObject:[_arrayNotes objectAtIndex:indexPath.section]];
+        [[DBManager sharedInstance] removeObject:[self.arrayNotes objectAtIndex:indexPath.section]];
         [[DBManager sharedInstance] saveContext];
     }
     [self.arrayNotes removeObjectAtIndex:indexPath.section];

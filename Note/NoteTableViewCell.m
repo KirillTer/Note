@@ -2,8 +2,8 @@
 //  NoteTableViewCell.m
 //  Note
 //
-//  Created by Admin on 11/11/15.
-//  Copyright © 2015 Admin. All rights reserved.
+//  Created by Admin on 1/26/16.
+//  Copyright © 2016 KirillTer. All rights reserved.
 //
 
 #import "NoteTableViewCell.h"
