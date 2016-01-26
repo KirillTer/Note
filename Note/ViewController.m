@@ -73,7 +73,11 @@
     }
 }
 - (IBAction)cancel:(id)sender{
-    [[DBManager sharedInstance] removeObject:self.note];
+    NSDateFormatter *DateFormatter=[[NSDateFormatter alloc] init];
+    [DateFormatter setDateFormat:@"dd MMM yyyy, hh:mm"];
+    if ((![self.noteTextView.text length]) || ([self.dateLabel.text isEqualToString:[DateFormatter stringFromDate:[NSDate date]]])) {
+        [[DBManager sharedInstance] removeObject:self.note];
+    }
     [[self navigationController] popViewControllerAnimated:YES];
 }
 

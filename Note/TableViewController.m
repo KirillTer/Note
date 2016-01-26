@@ -50,7 +50,7 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     self.arrayNotes = [[[DBManager sharedInstance] fetchEntities:@"Note"] mutableCopy];
-    if ([self isEmpty]) {
+    if ([self.arrayNotes count] == 0) {
         CGRect viewFrame = self.view.frame;
         CGRect labelFrame = CGRectMake(20, CGRectGetHeight(viewFrame)/2 - 25, CGRectGetWidth(viewFrame) - 40, 50);
         UILabel *label = [[UILabel alloc] initWithFrame:labelFrame];
